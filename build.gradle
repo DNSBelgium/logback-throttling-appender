@@ -1,0 +1,92 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    //id 'signing'
+    //id 'checkstyle'
+    //id 'jacoco'
+    //id 'com.github.spotbugs' version '4.5.0'
+}
+
+group = "be.dnsbelgium"
+version = "1.0"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api 'ch.qos.logback:logback-classic:1.2.9'
+    testImplementation("org.assertj:assertj-core:3.24.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.matching {task -> task.name.startsWith('spotbugs')}.forEach {
+    it.reports {
+        html.enabled = true
+        xml.enabled = false
+    }
+}
+
+
+tasks.named('jar') {
+    manifest {
+        attributes('Automatic-Module-Name': 'be.dnsbelgium.logback.throttling.appender')
+    }
+}
+
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            artifactId = "logback-throttling-appender"
+//            from components.java
+//
+//            pom {
+//                name = 'Logback throttling appender'
+//                description = 'Logback appender that will throttle the emitted log events.'
+//                url = 'https://github.com/dnsbelgium/logback-throttling-appender'
+//                licenses {
+//                    license {
+//                        name = 'Apache License 2.0' as Publication
+//                        url = 'http://www.apache.org/licenses/LICENSE-2.0' as Publication
+//                    }
+//                }
+//                scm {
+//                    url = 'https://github.com/dnsbelgium/throttling-appender'
+//                    connection = 'scm:git:https://github.com/dnsbelgium/throttling-appender.git'
+//                }
+//                developers {
+//                    developer {
+//                        id = 'todo'
+//                        name = 'todo'
+//                        email = 'maarten.bosteels@dnsbelgium.be'
+//                    }
+//                }
+//            }
+//        }
+//    }
+////    repositories {
+////        maven {
+////            name = 'ossrh'
+////            credentials(PasswordCredentials)
+////            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+////            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+////            url version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+////        }
+////    }
+//}
+
+//signing {
+//    sign publishing.publications.mavenJava
+//}
